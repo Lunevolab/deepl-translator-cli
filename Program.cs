@@ -10,6 +10,18 @@ class Program
         {
             Console.WriteLine("Вы не ввели текст");
             // Тут пишу заглушку для проверки ввода текста через консоль
+
+            try
+            {
+                CheckApiKey();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Environment.Exit(1);
+
+            }
+
             Console.WriteLine("Введите текст для перевода");
             string myString = Console.ReadLine();
             string translatedString = await GetTranslateAsync(myString);
@@ -21,7 +33,16 @@ class Program
         {
             string myString = string.Join(" ", myList);
 
-            CheckApiKey();
+            try
+            {
+                CheckApiKey();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Environment.Exit(1);
+
+            }
 
             string translatedString = await GetTranslateAsync(myString);
             Console.WriteLine(translatedString);
@@ -32,9 +53,9 @@ class Program
     {
         string apiKey = Environment.GetEnvironmentVariable("DEEPL_API_KEY");
 
-        if (apiKey == null)
+        if (string.IsNullOrEmpty(apiKey)) 
         {
-            Console.WriteLine("apiKey введён не правильно");
+            throw new Exception("ключ пустой или введён неправильно. Проверьте переменную окружения DEEPL_API_KEY");
         }
     }
 
