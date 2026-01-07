@@ -6,47 +6,35 @@ class Program
     static async Task Main(string[] args)
     {
         List<string> myList = new List<string>(args);
+        string myString;
+
         if (args.Length == 0)
         {
             Console.WriteLine("Вы не ввели текст");
-            // Тут пишу заглушку для проверки ввода текста через консоль
-
-            try
-            {
-                CheckApiKey();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                Environment.Exit(1);
-
-            }
-
-            Console.WriteLine("Введите текст для перевода");
-            string myString = Console.ReadLine();
-            string translatedString = await GetTranslateAsync(myString);
-            Console.WriteLine(translatedString);
-            // Тут заканчивается заглушка
+            Console.Write("Введите текст для перевода: ");
+            myString = Console.ReadLine();
         }
 
         else
         {
-            string myString = string.Join(" ", myList);
+            myString = string.Join(" ", myList);
+        }
 
-            try
-            {
-                CheckApiKey();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                Environment.Exit(1);
+        try
+        {
+            
 
-            }
-
+            CheckApiKey();
             string translatedString = await GetTranslateAsync(myString);
             Console.WriteLine(translatedString);
+
         }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            Environment.Exit(1);
+        }
+
     }
 
     static void CheckApiKey()
@@ -76,6 +64,11 @@ class Program
         var url = "https://api-free.deepl.com/v2/translate";
 
         var response = await client.PostAsync(url, content);
+
+        if (response.IsSuccessStatusCode == false)
+        {
+            throw new Exception("Ошибка в запросе");
+        }
 
         string jsonResponse = await response.Content.ReadAsStringAsync();
 
