@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Net;
+using System.Text.Json;
 
 class Program
 {
@@ -37,6 +38,28 @@ class Program
 
     }
 
+    static void CheckStatusCode(HttpResponseMessage response)
+    {
+        switch (response.StatusCode)
+        {
+            case HttpStatusCode.BadRequest: throw new Exception("Запрос составлен неправильно");
+            case HttpStatusCode.Unauthorized: throw new Exception("Проблема с API-ключом");
+            case HttpStatusCode.Forbidden: throw new Exception("Доступ запрещён");
+            case HttpStatusCode.NotFound: throw new Exception("Endpoint не найден");
+            case HttpStatusCode.TooManyRequests: throw new Exception("Превышен лимит запросов");
+            case HttpStatusCode.InternalServerError: throw new Exception("Ошибка на стороне DeepL");
+            case HttpStatusCode.ServiceUnavailable: throw new Exception("Сервис временно недоступен");
+            default:
+
+                if ((int)response.StatusCode == 456)
+                {
+                    throw new Exception("Закончился лимит переводов по тарифу");
+                }
+
+                throw new Exception($"Неизвестная ошибка. Код ответа: {(int)response.StatusCode}");
+        }
+    }
+
     static void CheckApiKey()
     {
         string apiKey = Environment.GetEnvironmentVariable("DEEPL_API_KEY");
@@ -65,9 +88,9 @@ class Program
 
         var response = await client.PostAsync(url, content);
 
-        if (response.IsSuccessStatusCode == false)
+        if (!response.IsSuccessStatusCode)
         {
-            throw new Exception("Ошибка в запросе");
+            CheckStatusCode(response);
         }
 
         string jsonResponse = await response.Content.ReadAsStringAsync();
