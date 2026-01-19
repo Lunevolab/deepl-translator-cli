@@ -94,19 +94,19 @@ class Program
 
         string jsonResponse = await response.Content.ReadAsStringAsync();
 
-        // 1. Превращаем строку в дерево
+        // 1. Parse the JSON string into a document
         JsonDocument document = JsonDocument.Parse(jsonResponse);
 
-        // 2. Берём корень
+        // 2. Get the root element
         JsonElement root = document.RootElement;
 
-        // 3. Берём массив translations
+        // 3. Get the 'translations' array
         JsonElement translations = root.GetProperty("translations");
 
-        // 4. Берём первый элемент массива
+        // 4. Get the first element of the array
         JsonElement firstTranslation = translations[0];
 
-        // 5. Достаём текст
+        // 5. Extract the translated text
         string translatedText = firstTranslation.GetProperty("text").GetString();
 
         return translatedText;
