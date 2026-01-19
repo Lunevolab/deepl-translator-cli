@@ -11,8 +11,8 @@ class Program
 
         if (args.Length == 0)
         {
-            Console.WriteLine("Вы не ввели текст");
-            Console.Write("Введите текст для перевода: ");
+            Console.WriteLine("No text entered");
+            Console.Write("Enter text to translate: ");
             myString = Console.ReadLine();
         }
 
@@ -42,21 +42,21 @@ class Program
     {
         switch (response.StatusCode)
         {
-            case HttpStatusCode.BadRequest: throw new Exception("Запрос составлен неправильно");
-            case HttpStatusCode.Unauthorized: throw new Exception("Проблема с API-ключом");
-            case HttpStatusCode.Forbidden: throw new Exception("Доступ запрещён");
-            case HttpStatusCode.NotFound: throw new Exception("Endpoint не найден");
-            case HttpStatusCode.TooManyRequests: throw new Exception("Превышен лимит запросов");
-            case HttpStatusCode.InternalServerError: throw new Exception("Ошибка на стороне DeepL");
-            case HttpStatusCode.ServiceUnavailable: throw new Exception("Сервис временно недоступен");
+            case HttpStatusCode.BadRequest: throw new Exception("Bad request");
+            case HttpStatusCode.Unauthorized: throw new Exception("Problem with API key");
+            case HttpStatusCode.Forbidden: throw new Exception("Access forbidden");
+            case HttpStatusCode.NotFound: throw new Exception("Endpoint not found");
+            case HttpStatusCode.TooManyRequests: throw new Exception("Too many requests");
+            case HttpStatusCode.InternalServerError: throw new Exception("Internal server error on DeepL side");
+            case HttpStatusCode.ServiceUnavailable: throw new Exception("Service temporarily unavailable");
             default:
 
                 if ((int)response.StatusCode == 456)
                 {
-                    throw new Exception("Закончился лимит переводов по тарифу");
+                    throw new Exception("Translation limit for the plan has been reached");
                 }
 
-                throw new Exception($"Неизвестная ошибка. Код ответа: {(int)response.StatusCode}");
+                throw new Exception($"Unknown error. Response code: {(int)response.StatusCode}");
         }
     }
 
@@ -66,7 +66,7 @@ class Program
 
         if (string.IsNullOrEmpty(apiKey)) 
         {
-            throw new Exception("ключ пустой или введён неправильно. Проверьте переменную окружения DEEPL_API_KEY");
+            throw new Exception("API key is missing or incorrect. Check the DEEPL_API_KEY environment variable");
         }
     }
 
@@ -78,8 +78,7 @@ class Program
         {
             { "auth_key", apiKey },
             { "text", text },
-            { "source_lang", "EN" },
-            { "target_lang", "RU" }
+            { "target_lang", "EN" }
         };
 
         var content = new FormUrlEncodedContent(values);
