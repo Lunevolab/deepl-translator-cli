@@ -1,9 +1,12 @@
 ﻿using System.Net;
+using System.Net.Http.Headers;
 using System.Text.Json;
 
 class Program
 {
     static HttpClient client = new HttpClient();
+
+
     static async Task Main(string[] args)
     {
         List<string> myList = new List<string>(args);
@@ -74,9 +77,10 @@ class Program
     {
         string apiKey = Environment.GetEnvironmentVariable("DEEPL_API_KEY");
 
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("DeepL-Auth-Key", apiKey);
+
         var values = new Dictionary<string, string>
         {
-            { "auth_key", apiKey },
             { "text", text },
             { "target_lang", "EN" }
         };
